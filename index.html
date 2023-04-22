@@ -41,10 +41,11 @@
 async function mintTokens(amount) {
     const decimals = await contract.methods.decimals().call();
     const mintPrice = await contract.methods.MINT_PRICE().call();
-    const tokenAmount = amount * (10 ** decimals);
-    const ethAmount = web3.utils.toWei((tokenAmount / mintPrice).toString(), "ether");
-    await contract.methods.mint(tokenAmount).send({ from: userAccount, value: ethAmount });
+    const tokenAmount = web3.utils.toBN(amount).mul(web3.utils.toBN(10 ** decimals));
+    const ethAmount = tokenAmount.mul(web3.utils.toBN(10 ** 18)).div(web3.utils.toBN(mintPrice));
+    await contract.methods.mint(tokenAmount.toString()).send({ from: userAccount, value: ethAmount.toString() });
 }
+
 
 
         document.getElementById("connectWallet").addEventListener("click", async () => {
